@@ -1,0 +1,145 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>滾輪組事件</title>
+</head><body>
+
+
+
+<style>
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    position: absolute;
+    overflow: hidden;
+}
+.TxSlide {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: all 3s ease-out;
+}
+.TxSlide > div {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    font-size: 8em;
+    text-align: center;
+}
+.TxSlide > div::before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+.top {
+    transform: translateY(-100vh);
+    background: lightskyblue;
+}
+.left {
+    transform: translateX(-100vw);
+    background: brown;
+}
+.right {
+    transform: translateX(100vw);
+    background: darkseagreen;
+}
+.down {
+    transform: translateY(100vh);
+    background: mediumpurple;
+}
+.TxShowInf {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+</style>
+
+
+
+<div class="TxSlide">
+    <div class="top">『上』</div>
+    <div class="left">『左』</div>
+    <div class="center"></div>
+    <div class="right">『右』</div>
+    <div class="down">『下』</div>
+</div>
+
+
+<ul class="TxShowInf">
+    <li>來源類型：  <span class="TxShowInf_useType">null</span>。（detail.useType： wheel, mouse, touch）</li>
+    <li>deltaMode： <span class="TxShowInf_deltaMode">null</span>。（deltaMode： 數值）</li>
+    <li>deltaX：    <span class="TxShowInf_deltaX">null</span>。（deltaX： 數值）</li>
+    <li>deltaY：    <span class="TxShowInf_deltaY">null</span>。（deltaY： 數值）</li>
+    <li>deltaZ：    <span class="TxShowInf_deltaZ">null</span>。（deltaZ： 數值）</li>
+</ul>
+
+
+
+<script src="../lib/naviVerify.js"></script>
+<script src="../lib/jzTree_additional.js"></script>
+<script src="../lib/onMultiMouse.js"></script>
+<script src="../lib/onMultiWheel.js"></script>
+<script>
+
+    onMultiMouse();
+    onMultiWheel();
+
+    var HElem_slide = document.querySelector('.TxSlide'),
+        HElem_showInf_useType = document.querySelector('.TxShowInf_useType'),
+        HElem_showInf_deltaMode = document.querySelector('.TxShowInf_deltaMode'),
+        HElem_showInf_deltaX = document.querySelector('.TxShowInf_deltaX'),
+        HElem_showInf_deltaY = document.querySelector('.TxShowInf_deltaY'),
+        HElem_showInf_deltaZ = document.querySelector('.TxShowInf_deltaZ');
+
+    var timeStamp = 0,
+        jPlace = 0;
+
+    function FuncMultiMouseEvt( evt ){
+        console.log( evt.timeStamp - timeStamp );
+        timeStamp = evt.timeStamp;
+
+        console.group();
+        console.log( evt );
+        console.log('共有：');
+        console.log( evt.detail );
+        console.log( evt.deltaMode, evt.deltaX, evt.deltaY, evt.deltaZ );
+        console.groupEnd();
+
+        HElem_showInf_useType.innerText = evt.detail.useType || 'null';
+        let jVal;
+        jVal = evt.deltaMode;
+        HElem_showInf_deltaMode.innerText = ( typeof jVal === 'number' )? jVal : 'null';
+        jVal = evt.deltaX;
+        HElem_showInf_deltaX.innerText = ( typeof jVal === 'number' )? jVal : 'null';
+        jVal = evt.deltaY;
+        HElem_showInf_deltaY.innerText = ( typeof jVal === 'number' )? jVal : 'null';
+        jVal = evt.deltaZ;
+        HElem_showInf_deltaZ.innerText = ( typeof jVal === 'number' )? jVal : 'null';
+
+
+        evt.preventDefault();
+
+        var jContrast = ( evt.deltaX > evt.deltaY )? 'X' : 'Y',
+            jVal_place = evt[ 'delta' + jContrast ];
+        if( jVal_place > 0 ){
+            jPlace = 1;
+            HElem_slide.style.transform = ( jContrast === 'X' )?
+                'translate3d( -100vw, 0vh, 0 )' : 'translate3d( 0vw, -100vh, 0 )';
+        }else{
+            jPlace = 1;
+            HElem_slide.style.transform = ( jContrast === 'X' )?
+                'translate3d( 100vw, 0vh, 0 )' : 'translate3d( 0vw, 100vh, 0 )';
+        }
+    }
+
+    document.addEventListener( 'scroll', function(){ console.log('scroll'); }, false );
+    document.addEventListener( 'multiwheel', FuncMultiMouseEvt, false );
+    // document.removeEventListener( 'multiwheel', FuncMultiMouseEvt, false );
+
+</script>
+
+
+
+</body></html>
